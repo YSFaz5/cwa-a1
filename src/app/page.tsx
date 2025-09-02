@@ -1,103 +1,92 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState } from "react";
+import { generateTabsHTML, type TabSpec } from "@/lib/generateTabs";
+
+export default function HomePage() {
+  const [tabs, setTabs] = useState<TabSpec[]>([
+    { label: "Tab 1", content: "First tab content" },
+    { label: "Tab 2", content: "Second tab content" },
+  ]);
+  const [defaultIndex, setDefaultIndex] = useState(0);
+
+  const addTab = () =>
+    setTabs([...tabs, { label: `Tab ${tabs.length + 1}`, content: "" }]);
+
+  const update = (i: number, key: keyof TabSpec, val: string) => {
+    const copy = [...tabs];
+    copy[i] = { ...copy[i], [key]: val };
+    setTabs(copy);
+  };
+
+  const html = generateTabsHTML(tabs, defaultIndex);
+
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(html);
+    alert("Copied! Paste into a new file called Hello.html and open it in your browser.");
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <section style={{ padding: "16px" }}>
+      <h1>Tabs Generator</h1>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+      <div style={{ display: "grid", gap: 10, maxWidth: 800 }}>
+        {tabs.map((t, i) => (
+          <div key={i} style={{ border: "1px solid var(--border)", padding: 10, borderRadius: 8 }}>
+            <label>
+              Label:&nbsp;
+              <input
+                value={t.label}
+                onChange={(e) => update(i, "label", e.target.value)}
+                aria-label={`Label for Tab ${i + 1}`}
+              />
+            </label>
+            <br />
+            <label>
+              Content:&nbsp;
+              <input
+                value={t.content || ""}
+                onChange={(e) => update(i, "content", e.target.value)}
+                aria-label={`Content for Tab ${i + 1}`}
+                style={{ width: "100%" }}
+              />
+            </label>
+          </div>
+        ))}
+
+        <div>
+          <button onClick={addTab} style={{ marginRight: 8 }}>+ Add Tab</button>
+
+          <label>
+            Default Active Tab Index:&nbsp;
+            <input
+              type="number"
+              min={0}
+              max={tabs.length - 1}
+              value={defaultIndex}
+              onChange={(e) => setDefaultIndex(Number(e.target.value))}
+              style={{ width: 60 }}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </label>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+
+        <button onClick={copyToClipboard}>Copy HTML</button>
+
+        <h2>Preview (generated HTML string)</h2>
+        <pre
+          aria-label="Generated HTML preview"
+          style={{
+            whiteSpace: "pre-wrap",
+            border: "1px solid var(--border)",
+            padding: 10,
+            borderRadius: 8,
+            maxHeight: 360,
+            overflow: "auto",
+          }}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+{html}
+        </pre>
+      </div>
+    </section>
   );
 }

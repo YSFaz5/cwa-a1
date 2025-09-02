@@ -13,6 +13,9 @@ const LINKS = [
   { href: "/court-room", label: "Court Room" },
 ];
 
+<ThemeToggle/>
+import ThemeToggle from "@/components/ThemeToggle";
+
 export default function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -50,6 +53,7 @@ export default function Header() {
       >
         ☰
       </button>
+<ThemeToggle />
 
       {/* Menu */}
       {open && (
