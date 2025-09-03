@@ -1,13 +1,21 @@
 export default function AboutPage() {
   return (
-    <section style={{ padding: "16px" }}>
-      <h1>About this website</h1>
-      <p><strong>Yousa Faiyaz</strong> — 20510660</p>
+    <main className="p-6 space-y-6">
+      <h1 className="text-2xl font-bold">About</h1>
 
-      <video controls width={720} aria-label="How to use this website">
+      <p>
+        Hi, my name is <strong>Yousa Faiyaz</strong>, student number <strong>20510660</strong>. 
+        This page introduces me and includes a short video.
+      </p>
+
+      <video 
+        controls 
+        width="640" 
+        className="rounded border"
+      >
         <source src="/how-to.mp4" type="video/mp4" />
-        Your browser does not support HTML5 video.
+        Your browser does not support the video tag.
       </video>
-    </section>
+    </main>
   );
 }
