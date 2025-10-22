@@ -11,7 +11,7 @@ export default function EscapeRoomPage() {
   // STAGES
   const [stage, setStage] = useState<Stage>(1);
 
-  // tick each second while running
+  
   useEffect(() => {
     if (!running) return;
     const id = setInterval(() => setSeconds(s => s + 1), 1000);
@@ -42,7 +42,7 @@ export default function EscapeRoomPage() {
     >
       <h1>Escape Room</h1>
 
-      {/* Timer */}
+      
       <div style={{ marginBottom: 12 }}>
         <button onClick={start}>Start</button>
         <button onClick={pause} style={{ marginLeft: 8 }}>Pause</button>
@@ -50,14 +50,14 @@ export default function EscapeRoomPage() {
         <span style={{ marginLeft: 12 }} aria-live="polite">Time: {seconds}s</span>
       </div>
 
-      {/* Stage nav */}
+      
       <div style={{ marginBottom: 12 }}>
         <button onClick={prevStage} disabled={stage === 1}>← Prev</button>
         <span style={{ margin: "0 10px" }}>Stage {stage} of 3</span>
         <button onClick={nextStage} disabled={stage === 3}>Next →</button>
       </div>
 
-      {/* Stage content (placeholders) */}
+      
       {stage === 1 && (
         <div>
           <h2>Stage 1 — Fix Formatting</h2>
@@ -78,12 +78,25 @@ export default function EscapeRoomPage() {
         </div>
       )}
 
-      {/* We'll connect this to a DB later */}
+      
       <div style={{ marginTop: 16 }}>
-        <button id="save-btn" disabled title="DB wiring comes next">
-          Save progress (coming next)
-        </button>
+        <button onClick={() => saveProgress("escape", stage, seconds)}>
+  Save progress
+      </button>
       </div>
     </section>
   );
+}
+async function saveProgress(type: "escape", stage: number, seconds: number) {
+  const res = await fetch("/api/sessions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ type, stage, seconds }),
+  });
+  if (!res.ok) {
+    alert("Save failed");
+    return;
+  }
+  const data = await res.json();
+  alert("Saved: " + data.id);
 }
